@@ -38,6 +38,7 @@ public class ShadowPac extends AbstractGame {
     private int score;
     private int level;
     private int endFrame;
+    private int goal;
     private Player pacman;
     private ArrayList<Ghost> coloredGhosts;
     private ArrayList<Entity> entities;
@@ -51,6 +52,7 @@ public class ShadowPac extends AbstractGame {
         frame = 0;
         lives = 3;
         score = 1000;
+        goal = 1210;
         level = 0;
         pacman = null;
         entities = new ArrayList<Entity>();
@@ -230,7 +232,8 @@ public class ShadowPac extends AbstractGame {
             // Test for win and lose conditions
             if(lives == 0) lose = true;
             // Complete the level and show level complete messages
-            if(score == DOT_COUNT * 10) {
+            if(score == goal) {
+                if (level == 1) win = true;
                 levelComplete = true;
                 endFrame = frame + 300;
             }
@@ -263,11 +266,12 @@ public class ShadowPac extends AbstractGame {
             SIXTYFOUR_FONT.drawString("WELL DONE!", x, y);
         }
         // Show level complete messages for 300 frames
-        if (levelComplete) {
+        if (levelComplete && !win) {
             if (frame + 1 > endFrame) {
                 levelComplete = false;
                 start = false;
-                score = 0;
+                score = 700;
+                goal = 800;
                 entities.clear();
                 walls.clear();
                 level++;
