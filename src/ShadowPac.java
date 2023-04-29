@@ -72,7 +72,7 @@ public class ShadowPac extends AbstractGame {
                         pacman = new Player(x, y);
                         break;
                     case "Ghost":
-                        entities.add(new Ghost(x, y));
+                        entities.add(new Ghost(x, y, "res/ghostRed.png"));
                         break;
                     case "Wall":
                         entities.add(new Wall(x, y));
@@ -81,13 +81,15 @@ public class ShadowPac extends AbstractGame {
                         entities.add(new Dot(x, y));
                         break;
                     case "Cherry":
-                        entities.add(new Dot(x, y));
+                        entities.add(new Cherry(x, y));
                         break;
                     case "Pellet":
-                        entities.add(new Dot(x, y));
+                        entities.add(new Pellet(x, y));
                         break;
                     default:
-                        entities.add(new Ghost(x, y));
+                        // Create ghosts based on their color
+                        String color = type.substring(5);
+                        entities.add(new Ghost(x, y, "res/ghost" + color + ".png"));
                         break;
                 }
             }
