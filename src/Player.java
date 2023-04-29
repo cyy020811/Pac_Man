@@ -41,10 +41,6 @@ public class Player extends Entity {
         move(startPos.x, startPos.y);
     }
 
-    public int getSpeed() {
-        return speed;
-    }
-
     public void setSpeed(int speed) {
         this.speed = speed;
     }

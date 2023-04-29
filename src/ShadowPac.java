@@ -39,7 +39,9 @@ public class ShadowPac extends AbstractGame {
     private int level;
     private int endFrame;
     private Player pacman;
+    private ArrayList<Ghost> coloredGhosts;
     private ArrayList<Entity> entities;
+    private ArrayList<Wall> walls;
     public ShadowPac(){
         super(WINDOW_WIDTH, WINDOW_HEIGHT, GAME_TITLE);
         start = false;
@@ -52,6 +54,8 @@ public class ShadowPac extends AbstractGame {
         level = 0;
         pacman = null;
         entities = new ArrayList<Entity>();
+        coloredGhosts = new ArrayList<Ghost>();
+        walls = new ArrayList<Wall>();
     }
 
     /**
@@ -74,10 +78,13 @@ public class ShadowPac extends AbstractGame {
                         pacman = new Player(x, y);
                         break;
                     case "Ghost":
-                        entities.add(new Ghost(x, y, "Red"));
+                        Ghost ghost = new Ghost(x, y, "Red");
+                        entities.add(ghost);
                         break;
                     case "Wall":
-                        entities.add(new Wall(x, y));
+                        Wall wall = new Wall(x, y);
+                        entities.add(wall);
+                        walls.add(wall);
                         break;
                     case "Dot":
                         entities.add(new Dot(x, y));
@@ -91,7 +98,9 @@ public class ShadowPac extends AbstractGame {
                     default:
                         // Create ghosts based on their color
                         String color = type.substring(5);
-                        entities.add(new Ghost(x, y, color));
+                        Ghost coloredGhost = new Ghost(x, y, color);
+                        entities.add(coloredGhost);
+                        coloredGhosts.add(coloredGhost);
                         break;
                 }
             }
@@ -169,6 +178,8 @@ public class ShadowPac extends AbstractGame {
                 pacman.setRotation(180);
                 x -= STEP_SIZE;
             }
+            // Move the colored ghosts
+            for (Ghost ghost: coloredGhosts) ghost.move(walls);
             // Test the new position for possible collisions
             Rectangle newPos = new Rectangle(x, y, pacman.getWidth(), pacman.getHeight());
             Iterator<Entity> iterator = entities.iterator();
@@ -180,6 +191,11 @@ public class ShadowPac extends AbstractGame {
                         // Increment the score by 10 when an uneaten dot is eaten
                         case "Dot":
                             score += 10;
+                            iterator.remove();
+                            break;
+                        // Increment the score by 10 when an uneaten dot is eaten
+                        case "Cherry":
+                            score += 20;
                             iterator.remove();
                             break;
                         // Begin frenzy mode
@@ -196,6 +212,8 @@ public class ShadowPac extends AbstractGame {
                         // Lose a live when PacMan hits a ghost
                         case "Ghost":
                             hitGhost = true;
+                            Ghost ghost = (Ghost)entity;
+                            ghost.returnStart();
                             break;
                         default:
                             break;
@@ -218,7 +236,7 @@ public class ShadowPac extends AbstractGame {
             if (hitGhost) {
                 pacman.move(x, y);
                 pacman.returnStart();
-                lives--;
+                if (!frenzyMode) lives--;
             // Move to the next position
             } else if (canMove) {
                 pacman.move(x, y);
@@ -241,6 +259,7 @@ public class ShadowPac extends AbstractGame {
                 start = false;
                 score = 0;
                 entities.clear();
+                walls.clear();
                 level++;
                 readCSV();
             }

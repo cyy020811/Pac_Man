@@ -55,4 +55,7 @@ public abstract class Entity {
     public Rectangle getHitbox() {
         return hitbox;
     }
+    public void setImage(Image image) {
+        this.image = image;
+    }
 }
