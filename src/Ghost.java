@@ -14,6 +14,8 @@ enum Direction {
 
 public class Ghost extends Entity {
     private final static Image FRENZY_MODE_IMAGE = new Image("res/ghostFrenzy.png");
+    private Image coloredGhostImage;
+    private boolean isEaten;
     private double speed;
     private Direction direction;
     private String color;
@@ -21,7 +23,9 @@ public class Ghost extends Entity {
     public Ghost(double x, double y, String color) {
         super(new Image("res/ghost" + color + ".png"), x, y);
         this.color = color;
+        coloredGhostImage = new Image("res/ghost" + color + ".png");
         startPos = new Point(x, y);
+        isEaten = false;
         Random rand = new Random();
         // Assign one image and one direction to the ghost based on the color
         switch (color) {
@@ -122,5 +126,30 @@ public class Ghost extends Entity {
         setX(startPos.x);
         setY(startPos.y);
         getHitbox().moveTo(startPos);
+    }
+
+    // Set the ghost image for frenzy mode and switch it back afterwards
+    public void setFrenzyMode(boolean frenzyMode) {
+        if (frenzyMode) {
+            super.setImage(FRENZY_MODE_IMAGE);
+            speed -= 0.5;
+        } else {
+            super.setImage(coloredGhostImage);
+            isEaten = false;
+            speed += 0.5;
+        }
+    }
+
+    public void setEaten(boolean eaten) {
+        isEaten = eaten;
+    }
+
+    public boolean isEaten() {
+        return isEaten;
+    }
+
+    @Override
+    public void draw() {
+        if (!isEaten) super.draw();
     }
 }

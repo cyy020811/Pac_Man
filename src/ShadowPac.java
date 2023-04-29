@@ -50,7 +50,7 @@ public class ShadowPac extends AbstractGame {
         levelComplete = false;
         frame = 0;
         lives = 3;
-        score = 1200;
+        score = 1000;
         level = 0;
         pacman = null;
         entities = new ArrayList<Entity>();
@@ -179,7 +179,9 @@ public class ShadowPac extends AbstractGame {
                 x -= STEP_SIZE;
             }
             // Move the colored ghosts
-            for (Ghost ghost: coloredGhosts) ghost.move(walls);
+            for (Ghost ghost: coloredGhosts) {
+                if (!ghost.isEaten()) ghost.move(walls);
+            }
             // Test the new position for possible collisions
             Rectangle newPos = new Rectangle(x, y, pacman.getWidth(), pacman.getHeight());
             Iterator<Entity> iterator = entities.iterator();
@@ -203,6 +205,7 @@ public class ShadowPac extends AbstractGame {
                             frenzyMode = true;
                             endFrame = frame + 1000;
                             pacman.setSpeed(4);
+                            for (Ghost ghost: coloredGhosts) ghost.setFrenzyMode(frenzyMode);
                             iterator.remove();
                             break;
                         // Cannot move if the new position is inside a wall
@@ -214,6 +217,10 @@ public class ShadowPac extends AbstractGame {
                             hitGhost = true;
                             Ghost ghost = (Ghost)entity;
                             ghost.returnStart();
+                            if (frenzyMode) {
+                                if (!ghost.isEaten()) score += 30;
+                                ghost.setEaten(true);
+                            }
                             break;
                         default:
                             break;
@@ -231,14 +238,17 @@ public class ShadowPac extends AbstractGame {
             if (frenzyMode && frame + 1 > endFrame ) {
                 frenzyMode = false;
                 pacman.setSpeed(3);
+                for (Ghost ghost: coloredGhosts) ghost.setFrenzyMode(frenzyMode);
             }
             // Return to the starting point after a collision with a ghost
             if (hitGhost) {
                 pacman.move(x, y);
-                pacman.returnStart();
-                if (!frenzyMode) lives--;
-            // Move to the next position
+                if (!frenzyMode) {
+                    pacman.returnStart();
+                    lives--;
+                }
             } else if (canMove) {
+                // Move to the next position
                 pacman.move(x, y);
             }
         }
