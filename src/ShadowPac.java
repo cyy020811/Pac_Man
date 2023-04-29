@@ -51,7 +51,7 @@ public class ShadowPac extends AbstractGame {
         levelComplete = false;
         frame = 0;
         lives = 3;
-        score = 0;
+        score = 1200;
         goal = 1210;
         level = 0;
         pacman = null;
@@ -232,7 +232,7 @@ public class ShadowPac extends AbstractGame {
             // Test for win and lose conditions
             if(lives == 0) lose = true;
             // Complete the level and show level complete messages
-            if(score == goal) {
+            if(score >= goal) {
                 if (level == 1) win = true;
                 levelComplete = true;
                 endFrame = frame + 300;
