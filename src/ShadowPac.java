@@ -51,7 +51,7 @@ public class ShadowPac extends AbstractGame {
         levelComplete = false;
         frame = 0;
         lives = 3;
-        score = 1000;
+        score = 0;
         goal = 1210;
         level = 0;
         pacman = null;
@@ -270,7 +270,7 @@ public class ShadowPac extends AbstractGame {
             if (frame + 1 > endFrame) {
                 levelComplete = false;
                 start = false;
-                score = 700;
+                score = 0;
                 goal = 800;
                 entities.clear();
                 walls.clear();
