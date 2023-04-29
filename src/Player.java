@@ -7,6 +7,7 @@ public class Player extends Entity {
     private final static Image PAC_OPEN_IMAGE = new Image("res/pacOpen.png");
     private double rotation = 0;
     private Point startPos;
+    private int speed = 3;
 
     public Player(double x, double y) {
         super(PAC_CLOSE_IMAGE, x, y);
@@ -38,5 +39,13 @@ public class Player extends Entity {
     // Return to the starting position
     public void returnStart(){
         move(startPos.x, startPos.y);
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }

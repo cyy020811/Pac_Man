@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Skeleton Code for SWEN20003 Project 1, Semester 1, 2023
@@ -31,6 +32,7 @@ public class ShadowPac extends AbstractGame {
     private boolean win;
     private boolean lose;
     private boolean levelComplete;
+    private boolean frenzyMode = false;
     private int frame;
     private int lives;
     private int score;
@@ -58,9 +60,9 @@ public class ShadowPac extends AbstractGame {
      */
     private void readCSV() {
         // Extract the csv file with a buffer reader
-        try (BufferedReader br = new BufferedReader(new FileReader("res/level"+ level +".csv"))){
+        try (BufferedReader br = new BufferedReader(new FileReader("res/level" + level + ".csv"))) {
             String line;
-            while ((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 // Process the input
                 String[] data = line.split(",");
                 String type = data[0];
@@ -72,7 +74,7 @@ public class ShadowPac extends AbstractGame {
                         pacman = new Player(x, y);
                         break;
                     case "Ghost":
-                        entities.add(new Ghost(x, y, "res/ghostRed.png"));
+                        entities.add(new Ghost(x, y, "Red"));
                         break;
                     case "Wall":
                         entities.add(new Wall(x, y));
@@ -89,12 +91,12 @@ public class ShadowPac extends AbstractGame {
                     default:
                         // Create ghosts based on their color
                         String color = type.substring(5);
-                        entities.add(new Ghost(x, y, "res/ghost" + color + ".png"));
+                        entities.add(new Ghost(x, y, color));
                         break;
                 }
             }
         }
-        catch (IOException e){
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -169,17 +171,23 @@ public class ShadowPac extends AbstractGame {
             }
             // Test the new position for possible collisions
             Rectangle newPos = new Rectangle(x, y, pacman.getWidth(), pacman.getHeight());
-            for (Entity entity: entities) {
+            Iterator<Entity> iterator = entities.iterator();
+            while (iterator.hasNext()) {
+                Entity entity = iterator.next();
                 if (entity.getHitbox().intersects(newPos)) {
                     String className = entity.getClass().getName();
                     switch (className) {
                         // Increment the score by 10 when an uneaten dot is eaten
                         case "Dot":
-                            Dot dot = (Dot)entity;
-                            if (!dot.isEaten()) {
-                                dot.eaten();
-                                score += 10;
-                            }
+                            score += 10;
+                            iterator.remove();
+                            break;
+                        // Begin frenzy mode
+                        case "Pellet":
+                            frenzyMode = true;
+                            endFrame = frame + 1000;
+                            pacman.setSpeed(4);
+                            iterator.remove();
                             break;
                         // Cannot move if the new position is inside a wall
                         case "Wall":
@@ -188,7 +196,6 @@ public class ShadowPac extends AbstractGame {
                         // Lose a live when PacMan hits a ghost
                         case "Ghost":
                             hitGhost = true;
-                            lives--;
                             break;
                         default:
                             break;
@@ -202,10 +209,16 @@ public class ShadowPac extends AbstractGame {
                 levelComplete = true;
                 endFrame = frame + 300;
             }
+            // Turn off frenzy mode
+            if (frenzyMode && frame + 1 > endFrame ) {
+                frenzyMode = false;
+                pacman.setSpeed(3);
+            }
             // Return to the starting point after a collision with a ghost
             if (hitGhost) {
                 pacman.move(x, y);
                 pacman.returnStart();
+                lives--;
             // Move to the next position
             } else if (canMove) {
                 pacman.move(x, y);
