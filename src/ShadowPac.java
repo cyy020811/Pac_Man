@@ -7,6 +7,7 @@ import bagel.util.Rectangle;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Skeleton Code for SWEN20003 Project 1, Semester 1, 2023
@@ -28,21 +29,26 @@ public class ShadowPac extends AbstractGame {
     private boolean start;
     private boolean win;
     private boolean lose;
+    private boolean levelComplete;
     private int frame;
     private int lives;
     private int score;
+    private int level;
+    private int endFrame;
     private Player pacman;
-    private Entity[] entities;
+    private ArrayList<Entity> entities;
     public ShadowPac(){
         super(WINDOW_WIDTH, WINDOW_HEIGHT, GAME_TITLE);
         start = false;
         win = false;
         lose = false;
+        levelComplete = false;
         frame = 0;
         lives = 3;
-        score = 0;
+        score = 1200;
+        level = 0;
         pacman = null;
-        entities = new Entity[270];
+        entities = new ArrayList<Entity>();
     }
 
     /**
@@ -51,8 +57,7 @@ public class ShadowPac extends AbstractGame {
      */
     private void readCSV() {
         // Extract the csv file with a buffer reader
-        int count = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader("res/level0.csv"))){
+        try (BufferedReader br = new BufferedReader(new FileReader("res/level"+ level +".csv"))){
             String line;
             while ((line = br.readLine()) != null){
                 // Process the input
@@ -66,15 +71,22 @@ public class ShadowPac extends AbstractGame {
                         pacman = new Player(x, y);
                         break;
                     case "Ghost":
-                        entities[count++] = new Ghost(x, y);
+                        entities.add(new Ghost(x, y));
                         break;
                     case "Wall":
-                        entities[count++] = new Wall(x, y);
+                        entities.add(new Wall(x, y));
                         break;
                     case "Dot":
-                        entities[count++] = new Dot(x, y);
+                        entities.add(new Dot(x, y));
+                        break;
+                    case "Cherry":
+                        entities.add(new Dot(x, y));
+                        break;
+                    case "Pellet":
+                        entities.add(new Dot(x, y));
                         break;
                     default:
+                        entities.add(new Ghost(x, y));
                         break;
                 }
             }
@@ -109,7 +121,7 @@ public class ShadowPac extends AbstractGame {
             LARGE_FONT.drawString(GAME_TITLE, 260, 250);
             MEDIUM_FONT.drawString("PRESS SPACE TO START", 320, 440);
             MEDIUM_FONT.drawString("USE ARROW KEYS TO MOVE", 320, 440 + 30);
-        } else if (!win && !lose) {
+        } else if (!levelComplete && !lose) {
             double x = pacman.getX();
             double y = pacman.getY();
             double heartX = 900;
@@ -174,7 +186,10 @@ public class ShadowPac extends AbstractGame {
             }
             // Test for win and lose conditions
             if(lives == 0) lose = true;
-            if(score == DOT_COUNT * 10) win = true;
+            if(score == DOT_COUNT * 10) {
+                levelComplete = true;
+                endFrame = frame + 300;
+            }
             // Return to the starting point after a collision with a ghost
             if (hitGhost) {
                 pacman.move(x, y);
@@ -193,6 +208,13 @@ public class ShadowPac extends AbstractGame {
             double x = (Window.getWidth() - LARGE_FONT.getWidth("WELL DONE!"))/2.0;
             double y = Window.getHeight()/2.0;
             LARGE_FONT.drawString("WELL DONE!", x, y);
+        }
+        // Level complete message
+        if (levelComplete) {
+            if (frame + 1 > endFrame) levelComplete = false;
+            double x = (Window.getWidth() - LARGE_FONT.getWidth("LEVEL COMPLETE!"))/2.0;
+            double y = Window.getHeight()/2.0;
+            LARGE_FONT.drawString("LEVEL COMPLETE!", x, y);
         }
         // Game losing message
         if (lose) {
