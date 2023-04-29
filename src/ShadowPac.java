@@ -21,9 +21,10 @@ public class ShadowPac extends AbstractGame {
     private final static String GAME_TITLE = "SHADOW PAC";
     private final static int DOT_COUNT = 121;
     private final static double STEP_SIZE = 3;
-    private final Font LARGE_FONT = new Font("res/FSO8BITR.TTF", 64);
-    private final Font MEDIUM_FONT = new Font("res/FSO8BITR.TTF", 24);
-    private final Font SMALL_FONT = new Font("res/FSO8BITR.TTF", 20);
+    private final Font SIXTYFOUR_FONT = new Font("res/FSO8BITR.TTF", 64);
+    private final Font FORTY_FONT = new Font("res/FSO8BITR.TTF", 40);
+    private final Font TWENTYFOUR_FONT = new Font("res/FSO8BITR.TTF", 24);
+    private final Font TWENTY_FONT = new Font("res/FSO8BITR.TTF", 20);
     private final Image BACKGROUND_IMAGE = new Image("res/background0.png");
     private final Image HEART_IMAGE = new Image("res/heart.png");
     private boolean start;
@@ -118,9 +119,17 @@ public class ShadowPac extends AbstractGame {
         BACKGROUND_IMAGE.draw(Window.getWidth()/2.0, Window.getHeight()/2.0);
         // Game Start
         if (!start) {
-            LARGE_FONT.drawString(GAME_TITLE, 260, 250);
-            MEDIUM_FONT.drawString("PRESS SPACE TO START", 320, 440);
-            MEDIUM_FONT.drawString("USE ARROW KEYS TO MOVE", 320, 440 + 30);
+            // Different start screens for level 0 and 1
+            if (level == 1) {
+                int space = 36;
+                FORTY_FONT.drawString("PRESS SPACE TO START", 200, 350);
+                FORTY_FONT.drawString("USE ARROW KEYS TO MOVE", 200, 350 + space);
+                FORTY_FONT.drawString("EAT THE PELLET TO ATTACK", 200, 350 + space * 2);
+            } else {
+                SIXTYFOUR_FONT.drawString(GAME_TITLE, 260, 250);
+                TWENTYFOUR_FONT.drawString("PRESS SPACE TO START", 320, 440);
+                TWENTYFOUR_FONT.drawString("USE ARROW KEYS TO MOVE", 320, 440 + 30);
+            }
         } else if (!levelComplete && !lose) {
             double x = pacman.getX();
             double y = pacman.getY();
@@ -130,7 +139,7 @@ public class ShadowPac extends AbstractGame {
             boolean hitGhost = false;
             pacman.draw(frame);
             // Show current score and remaining lives
-            SMALL_FONT.drawString("SCORE " + score, 25, 25);
+            TWENTY_FONT.drawString("SCORE " + score, 25, 25);
             for (int i = 0; i < lives; i++) {
                 HEART_IMAGE.drawFromTopLeft(heartX, heartY);
                 heartX += 30;
@@ -186,6 +195,7 @@ public class ShadowPac extends AbstractGame {
             }
             // Test for win and lose conditions
             if(lives == 0) lose = true;
+            // Complete the level and show level complete messages
             if(score == DOT_COUNT * 10) {
                 levelComplete = true;
                 endFrame = frame + 300;
@@ -205,22 +215,29 @@ public class ShadowPac extends AbstractGame {
         }
         // Game winning message
         if (win) {
-            double x = (Window.getWidth() - LARGE_FONT.getWidth("WELL DONE!"))/2.0;
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("WELL DONE!"))/2.0;
             double y = Window.getHeight()/2.0;
-            LARGE_FONT.drawString("WELL DONE!", x, y);
+            SIXTYFOUR_FONT.drawString("WELL DONE!", x, y);
         }
-        // Level complete message
+        // Show level complete messages for 300 frames
         if (levelComplete) {
-            if (frame + 1 > endFrame) levelComplete = false;
-            double x = (Window.getWidth() - LARGE_FONT.getWidth("LEVEL COMPLETE!"))/2.0;
+            if (frame + 1 > endFrame) {
+                levelComplete = false;
+                start = false;
+                score = 0;
+                entities.clear();
+                level++;
+                readCSV();
+            }
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("LEVEL COMPLETE!"))/2.0;
             double y = Window.getHeight()/2.0;
-            LARGE_FONT.drawString("LEVEL COMPLETE!", x, y);
+            SIXTYFOUR_FONT.drawString("LEVEL COMPLETE!", x, y);
         }
         // Game losing message
         if (lose) {
-            double x = (Window.getWidth() - LARGE_FONT.getWidth("GAME OVER!"))/2.0;
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("GAME OVER!"))/2.0;
             double y = Window.getHeight()/2.0;
-            LARGE_FONT.drawString("GAME OVER!", x, y);
+            SIXTYFOUR_FONT.drawString("GAME OVER!", x, y);
         }
     }
 }
