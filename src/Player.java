@@ -22,7 +22,7 @@ public class Player extends Entity {
     public void draw(int frame) {
         DrawOptions drawOptions = new DrawOptions();
         // Switch between open and close images every 15 frames and rotate the PacMan
-        if ((frame / 15) % 2 == 0){
+        if ((frame / 15) % 2 == 0) {
             PAC_CLOSE_IMAGE.drawFromTopLeft(topLeft().x, topLeft().y, drawOptions.setRotation(rotation));
         } else {
             PAC_OPEN_IMAGE.drawFromTopLeft(topLeft().x, topLeft().y, drawOptions.setRotation(rotation));
@@ -30,18 +30,22 @@ public class Player extends Entity {
     }
 
     // Move the PacMan to the new position
-    public void move(double x, double y){
+    public void move(double x, double y) {
         setX(x);
         setY(y);
         getHitbox().moveTo(new Point(x, y));
     }
 
     // Return to the starting position
-    public void returnStart(){
+    public void returnStart() {
         move(startPos.x, startPos.y);
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 }

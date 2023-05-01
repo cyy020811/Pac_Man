@@ -20,11 +20,11 @@ public abstract class Entity {
     }
 
     // Draw the image from top-left
-    public void draw(){
+    public void draw() {
         image.drawFromTopLeft(x, y);
     }
 
-    public Point topLeft(){
+    public Point topLeft() {
         return hitbox.topLeft();
     }
 

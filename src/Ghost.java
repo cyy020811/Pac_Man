@@ -122,7 +122,7 @@ public class Ghost extends Entity {
     }
 
     // Return to the starting position
-    public void returnStart(){
+    public void returnStart() {
         setX(startPos.x);
         setY(startPos.y);
         getHitbox().moveTo(startPos);

@@ -20,7 +20,6 @@ public class ShadowPac extends AbstractGame {
     private final static int WINDOW_WIDTH = 1024;
     private final static int WINDOW_HEIGHT = 768;
     private final static String GAME_TITLE = "SHADOW PAC";
-    private final static int DOT_COUNT = 121;
     private final static double STEP_SIZE = 3;
     private final Font SIXTYFOUR_FONT = new Font("res/FSO8BITR.TTF", 64);
     private final Font FORTY_FONT = new Font("res/FSO8BITR.TTF", 40);
@@ -51,7 +50,7 @@ public class ShadowPac extends AbstractGame {
         levelComplete = false;
         frame = 0;
         lives = 3;
-        score = 1200;
+        score = 0;
         goal = 1210;
         level = 0;
         pacman = null;
@@ -166,19 +165,19 @@ public class ShadowPac extends AbstractGame {
             // Move the PacMan and rotate its direction
             if (input.isDown(Keys.DOWN)) {
                 pacman.setRotation(90);
-                y += STEP_SIZE;
+                y += pacman.getSpeed();
             }
             if (input.isDown(Keys.UP)) {
                 pacman.setRotation(-90);
-                y -= STEP_SIZE;
+                y -= pacman.getSpeed();
             }
             if (input.isDown(Keys.RIGHT)) {
                 pacman.setRotation(0);
-                x += STEP_SIZE;
+                x += pacman.getSpeed();
             }
             if (input.isDown(Keys.LEFT)) {
                 pacman.setRotation(180);
-                x -= STEP_SIZE;
+                x -= pacman.getSpeed();
             }
             // Move the colored ghosts
             for (Ghost ghost: coloredGhosts) {
@@ -192,12 +191,12 @@ public class ShadowPac extends AbstractGame {
                 if (entity.getHitbox().intersects(newPos)) {
                     String className = entity.getClass().getName();
                     switch (className) {
-                        // Increment the score by 10 when an uneaten dot is eaten
+                        // Increment the score by 10 when a dot is eaten
                         case "Dot":
                             score += 10;
                             iterator.remove();
                             break;
-                        // Increment the score by 10 when an uneaten dot is eaten
+                        // Increment the score by 10 when a cherry is eaten
                         case "Cherry":
                             score += 20;
                             iterator.remove();
@@ -243,7 +242,7 @@ public class ShadowPac extends AbstractGame {
                 pacman.setSpeed(3);
                 for (Ghost ghost: coloredGhosts) ghost.setFrenzyMode(frenzyMode);
             }
-            // Return to the starting point after a collision with a ghost
+            // Return to the starting point after a collision with a ghost or gain points during frenzy mode
             if (hitGhost) {
                 pacman.move(x, y);
                 if (!frenzyMode) {
