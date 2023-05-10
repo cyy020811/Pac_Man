@@ -37,6 +37,7 @@ public class ShadowPac extends AbstractGame {
     private final static int LEVEL_COMPLETE_FRAME = 300;
     private final static int FRENZY_MODE_FRAME = 1000;
     private final static int GHOST_COLOR_INDEX = 5;
+    private final static int RIGHT_ANGLE = 90;
     private final static String GAME_TITLE = "SHADOW PAC";
     private final static String GAME_INSTRUCTIONS[] = {"PRESS SPACE TO START", "USE ARROW KEYS TO MOVE", "EAT THE PELLET TO ATTACK"};
     private final static String SCORE = "SCORE ";
@@ -72,7 +73,7 @@ public class ShadowPac extends AbstractGame {
         levelComplete = false;
         frame = 0;
         lives = INIT_LIVES;
-        score = 1200;
+        score = 0;
         goal = LEVEL_0_GOAL;
         level = INIT_LEVEL;
         pacman = null;
@@ -183,11 +184,11 @@ public class ShadowPac extends AbstractGame {
             }
             // Move the PacMan and rotate its direction
             if (input.isDown(Keys.DOWN)) {
-                pacman.setRotation(90);
+                pacman.setRotation(RIGHT_ANGLE);
                 y += pacman.getSpeed();
             }
             if (input.isDown(Keys.UP)) {
-                pacman.setRotation(-90);
+                pacman.setRotation(-RIGHT_ANGLE);
                 y -= pacman.getSpeed();
             }
             if (input.isDown(Keys.RIGHT)) {
@@ -195,7 +196,7 @@ public class ShadowPac extends AbstractGame {
                 x += pacman.getSpeed();
             }
             if (input.isDown(Keys.LEFT)) {
-                pacman.setRotation(180);
+                pacman.setRotation(2 * RIGHT_ANGLE);
                 x -= pacman.getSpeed();
             }
             // Move the colored ghosts
