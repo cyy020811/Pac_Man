@@ -14,12 +14,14 @@ enum Direction {
 
 public class Ghost extends Entity {
     private final static Image FRENZY_MODE_IMAGE = new Image("res/ghostFrenzy.png");
+    private final static int score = 30;
     private Image coloredGhostImage;
     private boolean isEaten;
     private double speed;
     private Direction direction;
     private String color;
     private Point startPos;
+
     public Ghost(double x, double y, String color) {
         super(new Image("res/ghost" + color + ".png"), x, y);
         this.color = color;
@@ -151,5 +153,9 @@ public class Ghost extends Entity {
     @Override
     public void draw() {
         if (!isEaten) super.draw();
+    }
+
+    public static int getScore() {
+        return score;
     }
 }

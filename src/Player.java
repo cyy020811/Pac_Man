@@ -41,8 +41,9 @@ public class Player extends Entity {
         move(startPos.x, startPos.y);
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setSpeed(boolean frenzyMode) {
+        if (frenzyMode) speed = 4;
+        else speed = 3;
     }
 
     public int getSpeed() {

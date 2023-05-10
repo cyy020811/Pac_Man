@@ -19,8 +19,30 @@ import java.util.Iterator;
 public class ShadowPac extends AbstractGame {
     private final static int WINDOW_WIDTH = 1024;
     private final static int WINDOW_HEIGHT = 768;
+    private final static int LEVEL_0_GOAL = 1210;
+    private final static int LEVEL_1_GOAL = 800;
+    private final static int L1_MESSAGE_X = 200;
+    private final static int L1_MESSAGE_Y = 350;
+    private final static int L0_MESSAGE_X = 320;
+    private final static int L0_MESSAGE_Y = 440;
+    private final static int GAME_TITLE_X = 260;
+    private final static int GAME_TITLE_Y = 250;
+    private final static int HEART_X = 900;
+    private final static int HEART_Y = 10;
+    private final static int HEART_SPACE = 30;
+    private final static int SCORE_COORD = 25;
+    private final static  int INIT_LIVES = 3;
+    private final static int INIT_LEVEL = 0;
+    private final static int FINAL_LEVEL = 1;
+    private final static int LEVEL_COMPLETE_FRAME = 300;
+    private final static int FRENZY_MODE_FRAME = 1000;
+    private final static int GHOST_COLOR_INDEX = 5;
     private final static String GAME_TITLE = "SHADOW PAC";
-    private final static double STEP_SIZE = 3;
+    private final static String GAME_INSTRUCTIONS[] = {"PRESS SPACE TO START", "USE ARROW KEYS TO MOVE", "EAT THE PELLET TO ATTACK"};
+    private final static String SCORE = "SCORE ";
+    private final static String WIN_MESSAGE = "WELL DONE!";
+    private final static String LOSE_MESSAGE = "GAME OVER!";
+    private final static String LEVEL_COMPLETE = "LEVEL COMPLETE!";
     private final Font SIXTYFOUR_FONT = new Font("res/FSO8BITR.TTF", 64);
     private final Font FORTY_FONT = new Font("res/FSO8BITR.TTF", 40);
     private final Font TWENTYFOUR_FONT = new Font("res/FSO8BITR.TTF", 24);
@@ -49,14 +71,14 @@ public class ShadowPac extends AbstractGame {
         lose = false;
         levelComplete = false;
         frame = 0;
-        lives = 3;
-        score = 0;
-        goal = 1210;
-        level = 0;
+        lives = INIT_LIVES;
+        score = 1200;
+        goal = LEVEL_0_GOAL;
+        level = INIT_LEVEL;
         pacman = null;
-        entities = new ArrayList<Entity>();
-        coloredGhosts = new ArrayList<Ghost>();
-        walls = new ArrayList<Wall>();
+        entities = new ArrayList<>();
+        coloredGhosts = new ArrayList<>();
+        walls = new ArrayList<>();
     }
 
     /**
@@ -98,7 +120,7 @@ public class ShadowPac extends AbstractGame {
                         break;
                     default:
                         // Create ghosts based on their color
-                        String color = type.substring(5);
+                        String color = type.substring(GHOST_COLOR_INDEX);
                         Ghost coloredGhost = new Ghost(x, y, color);
                         entities.add(coloredGhost);
                         coloredGhosts.add(coloredGhost);
@@ -134,29 +156,26 @@ public class ShadowPac extends AbstractGame {
         // Game Start
         if (!start) {
             // Different start screens for level 0 and 1
-            if (level == 1) {
+            if (level == FINAL_LEVEL) {
                 int space = 36;
-                FORTY_FONT.drawString("PRESS SPACE TO START", 200, 350);
-                FORTY_FONT.drawString("USE ARROW KEYS TO MOVE", 200, 350 + space);
-                FORTY_FONT.drawString("EAT THE PELLET TO ATTACK", 200, 350 + space * 2);
+                FORTY_FONT.drawString(GAME_INSTRUCTIONS[0], L1_MESSAGE_X, L1_MESSAGE_Y);
+                FORTY_FONT.drawString(GAME_INSTRUCTIONS[1], L1_MESSAGE_X, L1_MESSAGE_Y + space);
+                FORTY_FONT.drawString(GAME_INSTRUCTIONS[2], L1_MESSAGE_X, L1_MESSAGE_Y + space * 2);
             } else {
-                SIXTYFOUR_FONT.drawString(GAME_TITLE, 260, 250);
-                TWENTYFOUR_FONT.drawString("PRESS SPACE TO START", 320, 440);
-                TWENTYFOUR_FONT.drawString("USE ARROW KEYS TO MOVE", 320, 440 + 30);
+                SIXTYFOUR_FONT.drawString(GAME_TITLE, GAME_TITLE_X, GAME_TITLE_Y);
+                TWENTYFOUR_FONT.drawString(GAME_INSTRUCTIONS[0], L0_MESSAGE_X, L0_MESSAGE_Y);
+                TWENTYFOUR_FONT.drawString(GAME_INSTRUCTIONS[1], L0_MESSAGE_X, L0_MESSAGE_Y + 30);
             }
         } else if (!levelComplete && !lose) {
             double x = pacman.getX();
             double y = pacman.getY();
-            double heartX = 900;
-            double heartY = 10;
             boolean canMove = true;
             boolean hitGhost = false;
             pacman.draw(frame);
             // Show current score and remaining lives
-            TWENTY_FONT.drawString("SCORE " + score, 25, 25);
+            TWENTY_FONT.drawString(SCORE + score, SCORE_COORD, SCORE_COORD);
             for (int i = 0; i < lives; i++) {
-                HEART_IMAGE.drawFromTopLeft(heartX, heartY);
-                heartX += 30;
+                HEART_IMAGE.drawFromTopLeft(HEART_X + HEART_SPACE * i, HEART_Y);
             }
             // Draw all entities on to the screen
             for (Entity entity: entities) {
@@ -193,19 +212,19 @@ public class ShadowPac extends AbstractGame {
                     switch (className) {
                         // Increment the score by 10 when a dot is eaten
                         case "Dot":
-                            score += 10;
+                            score += Dot.getScore();
                             iterator.remove();
                             break;
                         // Increment the score by 10 when a cherry is eaten
                         case "Cherry":
-                            score += 20;
+                            score += Cherry.getScore();
                             iterator.remove();
                             break;
                         // Begin frenzy mode
                         case "Pellet":
                             frenzyMode = true;
-                            endFrame = frame + 1000;
-                            pacman.setSpeed(4);
+                            endFrame = frame + FRENZY_MODE_FRAME;
+                            pacman.setSpeed(frenzyMode);
                             for (Ghost ghost: coloredGhosts) ghost.setFrenzyMode(frenzyMode);
                             iterator.remove();
                             break;
@@ -219,7 +238,7 @@ public class ShadowPac extends AbstractGame {
                             Ghost ghost = (Ghost)entity;
                             ghost.returnStart();
                             if (frenzyMode) {
-                                if (!ghost.isEaten()) score += 30;
+                                if (!ghost.isEaten()) score += Ghost.getScore();
                                 ghost.setEaten(true);
                             }
                             break;
@@ -232,14 +251,14 @@ public class ShadowPac extends AbstractGame {
             if(lives == 0) lose = true;
             // Complete the level and show level complete messages
             if(score >= goal) {
-                if (level == 1) win = true;
+                if (level == FINAL_LEVEL) win = true;
                 levelComplete = true;
-                endFrame = frame + 300;
+                endFrame = frame + LEVEL_COMPLETE_FRAME;
             }
             // Turn off frenzy mode
             if (frenzyMode && frame + 1 > endFrame ) {
                 frenzyMode = false;
-                pacman.setSpeed(3);
+                pacman.setSpeed(frenzyMode);
                 for (Ghost ghost: coloredGhosts) ghost.setFrenzyMode(frenzyMode);
             }
             // Return to the starting point after a collision with a ghost or gain points during frenzy mode
@@ -260,9 +279,9 @@ public class ShadowPac extends AbstractGame {
         }
         // Game winning message
         if (win) {
-            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("WELL DONE!"))/2.0;
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth(WIN_MESSAGE))/2.0;
             double y = Window.getHeight()/2.0;
-            SIXTYFOUR_FONT.drawString("WELL DONE!", x, y);
+            SIXTYFOUR_FONT.drawString(WIN_MESSAGE, x, y);
         }
         // Show level complete messages for 300 frames
         if (levelComplete && !win) {
@@ -270,21 +289,21 @@ public class ShadowPac extends AbstractGame {
                 levelComplete = false;
                 start = false;
                 score = 0;
-                goal = 800;
+                goal = LEVEL_1_GOAL;
                 entities.clear();
                 walls.clear();
                 level++;
                 readCSV();
             }
-            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("LEVEL COMPLETE!"))/2.0;
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth(LEVEL_COMPLETE))/2.0;
             double y = Window.getHeight()/2.0;
-            SIXTYFOUR_FONT.drawString("LEVEL COMPLETE!", x, y);
+            SIXTYFOUR_FONT.drawString(LEVEL_COMPLETE, x, y);
         }
         // Game losing message
         if (lose) {
-            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth("GAME OVER!"))/2.0;
+            double x = (Window.getWidth() - SIXTYFOUR_FONT.getWidth(LOSE_MESSAGE))/2.0;
             double y = Window.getHeight()/2.0;
-            SIXTYFOUR_FONT.drawString("GAME OVER!", x, y);
+            SIXTYFOUR_FONT.drawString(LOSE_MESSAGE, x, y);
         }
     }
 }
