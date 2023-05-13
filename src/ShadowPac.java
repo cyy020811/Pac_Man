@@ -65,6 +65,9 @@ public class ShadowPac extends AbstractGame {
     private ArrayList<Ghost> coloredGhosts;
     private ArrayList<Entity> entities;
     private ArrayList<Wall> walls;
+
+    /** This method is used to create a ShadowPac instance
+     */
     public ShadowPac(){
         super(WINDOW_WIDTH, WINDOW_HEIGHT, GAME_TITLE);
         start = false;

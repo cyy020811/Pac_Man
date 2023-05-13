@@ -4,6 +4,7 @@ import bagel.util.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 enum Direction {
     UP,
@@ -22,6 +23,12 @@ public class Ghost extends Entity {
     private String color;
     private Point startPos;
 
+
+    /** This method is used to create a Ghost instance
+     * @param x this is the x position of the Ghost
+     * @param y this is the y position of the Ghost
+     * @param color this is the color of the Ghost
+     */
     public Ghost(double x, double y, String color) {
         super(new Image("res/ghost" + color + ".png"), x, y);
         this.color = color;
@@ -55,7 +62,10 @@ public class Ghost extends Entity {
         }
     }
 
-    // Move the ghost to its new position
+    /** This method is used to move the Ghost to the new
+     * position
+     * @param walls all the walls at the current level
+     */
     public void move(ArrayList<Wall> walls) {
         double x = getX();
         double y = getY();
@@ -88,7 +98,8 @@ public class Ghost extends Entity {
         }
     }
 
-    // Change the ghost's direction
+    /** This method is used to change the Ghost's direction
+     */
     public void setDirection() {
         // Randomly select a direction for pink ghost
         if (color.equals("Pink")) {
@@ -114,7 +125,13 @@ public class Ghost extends Entity {
         }
     }
 
-    // Test if the ghost collides with a wall
+    /** This method is used to check if the Ghost hits
+     * a wall
+     * @param walls all the walls at the current level
+     * @param x the x-coordinate of the Ghost
+     * @param y the y-coordinate of the Ghost
+     * @return boolean if the Ghost hits a wall
+     */
     private boolean collides(ArrayList<Wall> walls, double x, double y) {
         Rectangle newPos = new Rectangle(x, y, this.getWidth(), this.getHeight());
         for (Wall wall: walls) {
@@ -123,14 +140,17 @@ public class Ghost extends Entity {
         return false;
     }
 
-    // Return to the starting position
+    /** Return to the starting position
+     */
     public void returnStart() {
         setX(startPos.x);
         setY(startPos.y);
         getHitbox().moveTo(startPos);
     }
 
-    // Set the ghost image for frenzy mode and switch it back afterwards
+    /** Set the Ghost's image and speed for frenzy mode and switch it back afterwards
+     * @param frenzyMode the frenzy mode
+     */
     public void setFrenzyMode(boolean frenzyMode) {
         if (frenzyMode) {
             super.setImage(FRENZY_MODE_IMAGE);
@@ -142,19 +162,30 @@ public class Ghost extends Entity {
         }
     }
 
+    /** Set the Ghost's state
+     * @param eaten if the ghost is eaten
+     */
     public void setEaten(boolean eaten) {
         isEaten = eaten;
     }
 
+    /** Get the eaten state of the Ghost
+     * @return boolean the eaten state of the Ghost
+     */
     public boolean isEaten() {
         return isEaten;
     }
 
+    /** Draw the image from top-left if the Ghost is not eaten
+     */
     @Override
     public void draw() {
         if (!isEaten) super.draw();
     }
 
+    /** This method is used to return the score of a Ghost
+     * @return int the score
+     */
     public static int getScore() {
         return score;
     }
