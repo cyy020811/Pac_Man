@@ -1,5 +1,9 @@
 import bagel.Image;
 
+/** Represents a pellet that can be eaten by the player.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public class Pellet extends Entity {
     private final static Image PELLET_IMAGE = new Image("res/pellet.png");
 

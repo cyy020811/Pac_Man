@@ -2,6 +2,10 @@ import bagel.DrawOptions;
 import bagel.Image;
 import bagel.util.Point;
 
+/** Represents a player that can be controlled.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public class Player extends Entity {
     private final static Image PAC_CLOSE_IMAGE = new Image("res/pac.png");
     private final static Image PAC_OPEN_IMAGE = new Image("res/pacOpen.png");

@@ -1,5 +1,9 @@
 import bagel.Image;
 
+/** Represents a dot that can be eaten by the player.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public class Dot extends Entity {
     private final static Image DOT_IMAGE = new Image("res/dot.png");
     private final static int score = 10;

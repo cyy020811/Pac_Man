@@ -1,5 +1,9 @@
 import bagel.Image;
 
+/** Represents a cherry that can be eaten by the player.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public class Cherry extends Entity {
     private final static Image CHERRY_IMAGE = new Image("res/cherry.png");
     private final static int score = 20;

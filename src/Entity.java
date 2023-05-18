@@ -2,6 +2,10 @@ import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Rectangle;
 
+/** Represents an abstract entity that is contained in the game.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public abstract class Entity {
     private Image image;
     private Rectangle hitbox;

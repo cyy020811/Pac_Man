@@ -12,6 +12,10 @@ enum Direction {
     RIGHT
 }
 
+/** Represents a ghost.
+ * @author Chi-Yuan Yang
+ * @version 1.0
+ */
 public class Ghost extends Entity {
     private final static Image FRENZY_MODE_IMAGE = new Image("res/ghostFrenzy.png");
     private final static int score = 30;
