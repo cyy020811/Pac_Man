@@ -4,7 +4,6 @@ import bagel.util.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Set;
 
 enum Direction {
     UP,
